@@ -1,0 +1,1161 @@
+[
+  {
+    "id": "3f2cc446eccc",
+    "repositoryId": "1383991979",
+    "repositoryName": "automyx-forge-lab",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/automyx-forge-lab.git",
+    "bugDescription": "Navigation is not showing in the website. Audit the website.",
+    "status": "completed",
+    "createdAt": "2026-09-27T12:58:37.651Z",
+    "updatedAt": "2026-09-27T13:06:39.918Z",
+    "workspaceId": "0e4f0f",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:58:37.657Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:58:46.082Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:58:46.096Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "completed",
+        "timestamp": "2026-09-27T13:06:21.773Z"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "completed",
+        "timestamp": "2026-09-27T13:06:21.779Z",
+        "detail": "No tests found"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T13:06:24.402Z",
+        "detail": "The site’s navigation bar is not rendered on the pages."
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending",
+        "timestamp": "2026-09-27T13:06:21.782Z"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "completed",
+        "timestamp": "2026-09-27T13:06:37.931Z"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "failed",
+        "timestamp": "2026-09-27T13:06:39.872Z",
+        "detail": "Patch could not be applied cleanly (check: error: No valid patches in input (allow with \"--allow-empty\"))"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "completed",
+        "timestamp": "2026-09-27T13:06:39.899Z"
+      },
+      {
+        "id": "step_1790514384407",
+        "label": "Investigating code",
+        "status": "completed",
+        "timestamp": "2026-09-27T13:06:30.355Z"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "react",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "baselineTests": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 0,
+      "exitCode": -1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "report": {
+      "summary": "The site’s navigation bar is not rendered on the pages.",
+      "reproduction": {
+        "reproduced": true,
+        "details": "The <Nav> component is never rendered because it is not imported or included in the root layout, so the navigation bar never appears on the site.",
+        "regressionTestFile": "regression.test.ts",
+        "regressionTestCode": "/*\n  Regression test for the missing navigation bar.\n  The root layout (src/routes/__root.tsx) should render a <Nav /> component\n  that exposes a DOM element with data-testid=\"site-nav\". Before the fix the\n  element does not exist, causing the test to fail. After adding the <Nav />\n  render the test passes.\n*/\n\nimport { render, screen } from \"@testing-library/react\";\nimport { expect, test } from \"vitest\";\nimport { QueryClient, QueryClientProvider } from \"@tanstack/react-query\";\nimport { createRouter } from \"@tanstack/react-router\";\n\n// Import the root route definition (the object created by createRootRouteWithContext)\nimport { Route as rootRoute } from \"../src/routes/__root\";\n\n// Helper: build a router instance that uses the existing route tree.\n// This mirrors the production setup without needing the full app entry point.\nconst router = createRouter({\n  routeTree: rootRoute,\n  defaultPreload: \"intent\",\n});\n\n// A tiny wrapper that provides the router context required by the root route.\nfunction RouterProviderWrapper({ children }: { children: React.ReactNode }) {\n  return <router.Provider>{children}</router.Provider>;\n}\n\n// ---------------------------------------------------------------------------\n// Test\n// ---------------------------------------------------------------------------\ntest(\"navigation bar is rendered in the root layout\", async () => {\n  // The root route expects a QueryClient in its context. Provide one here.\n  const queryClient = new QueryClient();\n\n  render(\n    <RouterProviderWrapper>\n      {/* The component exported by the root route renders the whole app layout. */}\n      <rootRoute.Component />\n    </RouterProviderWrapper>\n  );\n\n  // The Nav component (once correctly imported) should render an element with\n  // data-testid=\"site-nav\" (this selector can be adjusted to match the actual\n  // Nav implementation, e.g., role=\"navigation\").\n  const nav = await screen.findByTestId(\"site-nav\");\n\n  expect(nav).toBeInTheDocument();\n});\n"
+      },
+      "rootCause": {
+        "summary": "The <Nav> component is never rendered because it is not imported or included in the root layout, so the navigation bar never appears on the site.",
+        "files": [
+          "src/routes/__root.tsx"
+        ],
+        "evidence": [
+          {
+            "type": "code",
+            "source": "src/components/automyx/Nav.tsx:1-30",
+            "description": "The Nav component is defined and returns the navigation markup.",
+            "content": "export function Nav() {\n  return (\n    <header ...>\n      ...\n      <nav className=\"hidden gap-8 font-mono-tag text-[11px] text-white md:flex\">\n        <a href=\"#lab\" ...>Lab</a>\n        ...\n      </nav>\n    </header>\n  );\n}"
+          },
+          {
+            "type": "code",
+            "source": "src/routes/__root.tsx:55-92",
+            "description": "The root route renders only <Outlet/> inside the QueryClientProvider; there is no reference to Nav, meaning the navigation bar is never inserted into the page.",
+            "content": "function RootComponent() {\n  const { queryClient } = Route.useRouteContext();\n\n  return (\n    <QueryClientProvider client={queryClient}>\n      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}\n      <Outlet />\n    </QueryClientProvider>\n  );\n}"
+          }
+        ],
+        "confidence": 95
+      },
+      "fix": {
+        "filesChanged": [
+          "src/routes/__root.tsx"
+        ],
+        "diff": "--- a/src/routes/__root.tsx\n+++ b/src/routes/__root.tsx\n@@\n import { QueryClient, QueryClientProvider } from \"@tanstack/react-query\";\n import {\n   Outlet,\n   Link,\n   createRootRouteWithContext,\n   useRouter,\n   HeadContent,\n   Scripts,\n } from \"@tanstack/react-router\";\n@@\n import appCss from \"../styles.css?url\";\n import { reportLovableError } from \"../lib/lovable-error-reporting\";\n+import { Nav } from \"@/components/automyx/Nav\";\n@@\n function RootComponent() {\n   const { queryClient } = Route.useRouteContext();\n \n   return (\n     <QueryClientProvider client={queryClient}>\n-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}\n-      <Outlet />\n+      {/* Navigation bar added to layout */}\n+      <Nav />\n+      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}\n+      <Outlet />\n     </QueryClientProvider>\n   );\n }\n",
+        "linesAdded": 5,
+        "linesRemoved": 2
+      },
+      "verification": {
+        "testsBefore": {
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "durationMs": 0,
+          "exitCode": -1,
+          "stdout": "",
+          "stderr": ""
+        },
+        "testsAfter": {
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "durationMs": 0,
+          "exitCode": -1,
+          "stdout": "",
+          "stderr": ""
+        }
+      },
+      "status": "partial"
+    }
+  },
+  {
+    "id": "365caa9a329a",
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "Project Detail Page routing is not working",
+    "status": "completed",
+    "createdAt": "2026-09-27T12:11:32.166Z",
+    "updatedAt": "2026-09-27T12:42:10.988Z",
+    "workspaceId": "45922e",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:22:39.316Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:22:39.322Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:22:39.327Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:33:27.737Z"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:33:27.742Z",
+        "detail": "No tests found"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:41:49.492Z",
+        "detail": "Navigating to a project's detail page (e.g., `/projects/awesome‑project`) does not render the page."
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:42:10.007Z"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "failed",
+        "timestamp": "2026-09-27T12:42:10.963Z",
+        "detail": "Patch could not be applied cleanly"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:42:10.975Z"
+      },
+      {
+        "id": "step_1790512909496",
+        "label": "Investigating code",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:42:04.836Z"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "report": {
+      "summary": "Navigating to a project's detail page (e.g., `/projects/awesome‑project`) does not render the page.",
+      "reproduction": {
+        "reproduced": true,
+        "details": "The page component is marked as a client component (`'use client'`) yet tries to read the dynamic route parameter `params` from its props. In Next JS the `params` prop is only supplied to **server** components. A client component receives no `params`, so `projectData[params.slug]` is always undefined and the page always shows “Project not found”, making the routing appear broken.",
+        "regressionTestFile": "regression.test.ts",
+        "regressionTestCode": "// regression.test.ts\n// This test reproduces the routing bug in `app/projects/[slug]/page.tsx`.\n// It initially **fails** because the component is a client component that\n// receives no `params` prop, resulting in the \"Project not found\" fallback.\n// After fixing the component (e.g., removing `'use client'` or using\n// `useParams`), the test will **pass**.\n\nimport React from \"react\";\nimport { render, screen } from \"@testing-library/react\";\nimport ProjectDetail from \"@/app/projects/[slug]/page\";\n\n// Mock framer‑motion to avoid animation‑related errors in the test environment.\njest.mock(\"framer-motion\", () => ({\n  motion: {\n    div: (props: any) => <div {...props} />,\n    span: (props: any) => <span {...props} />,\n    h1: (props: any) => <h1 {...props} />,\n    p: (props: any) => <p {...props} />,\n    section: (props: any) => <section {...props} />,\n  },\n}));\n\ndescribe(\"ProjectDetail page routing\", () => {\n  it(\"renders the correct project when a valid slug is supplied\", () => {\n    // Render the page component with the dynamic route parameter.\n    render(<ProjectDetail params={{ slug: \"rolewiz\" }} />);\n\n    // The page should display the project title (an <h1> element).\n    const title = screen.getByRole(\"heading\", { name: /rolewiz/i });\n    expect(title).toBeInTheDocument();\n  });\n});\n"
+      },
+      "rootCause": {
+        "summary": "The page component is marked as a client component (`'use client'`) yet tries to read the dynamic route parameter `params` from its props. In Next JS the `params` prop is only supplied to **server** components. A client component receives no `params`, so `projectData[params.slug]` is always undefined and the page always shows “Project not found”, making the routing appear broken.",
+        "files": [
+          "app/projects/[slug]/page.tsx"
+        ],
+        "evidence": [
+          {
+            "type": "code",
+            "source": "app/projects/[slug]/page.tsx:1",
+            "description": "The file is declared as a client component, which prevents Next.js from passing route params via props.",
+            "content": "'use client';"
+          },
+          {
+            "type": "code",
+            "source": "app/projects/[slug]/page.tsx:28",
+            "description": "The component expects `params.slug` from props, which will be undefined in a client component.",
+            "content": "export default function ProjectDetail({ params }: { params: { slug: string } }) {"
+          },
+          {
+            "type": "code",
+            "source": "app/projects/[slug]/page.tsx:30",
+            "description": "When `params` is undefined the lookup fails and the fallback UI is rendered.",
+            "content": "const project = projectData[params.slug];\nif (!project) return <div ...>Project not found</div>;"
+          }
+        ],
+        "confidence": 92
+      },
+      "fix": {
+        "filesChanged": [
+          "app/projects/[slug]/page.tsx"
+        ],
+        "diff": "*** Begin Patch\n*** Update File: app/projects/[slug]/page.tsx\n@@\n-'use client';\n+// This page should be a **server component** so that Next.js can pass the dynamic\n+// route parameters (`params`) directly as props. Removing the `'use client'`\n+// directive restores the expected behaviour.\n*** End Patch",
+        "linesAdded": 3,
+        "linesRemoved": 1
+      },
+      "verification": {
+        "testsBefore": {
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "durationMs": 0,
+          "exitCode": 0
+        }
+      },
+      "status": "partial"
+    }
+  },
+  {
+    "id": "24648e17c135",
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "Project detail page route is not working.",
+    "status": "failed",
+    "createdAt": "2026-09-27T11:39:08.261Z",
+    "updatedAt": "2026-09-27T12:10:17.324Z",
+    "workspaceId": "74dda5",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:08:09.378Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:08:09.394Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T12:08:09.421Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "failed",
+        "timestamp": "2026-09-27T12:10:17.322Z",
+        "detail": "npm error syscall rmdir\nnpm error path /workspace/repo/node_modules/date-fns/docs\nnpm error errno -39\nnpm error ENOTEMPTY: directory not empty, rmdir '/workspace/repo/node_modules/date-fns/docs'\nnpm e"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "error": "Failed to install dependencies: npm error syscall rmdir\nnpm error path /workspace/repo/node_modules/date-fns/docs\nnpm error errno -39\nnpm error ENOTEMPTY: directory not empty, rmdir '/workspace/repo/node_modules/date-fns/docs'\nnpm error A complete log of this run can be found in: /tmp/tracefix-npm-cache/_logs/2026-09-27T12_08_11_495Z-debug-0.log\nnpm error code ENOTEMPTY\nnpm error syscall rename\nnpm error path /workspace/repo/node_modules/eslint-plugin-react\nnpm error dest /workspace/repo/node_modules/.eslint-plugin-react-BMm4yb7n\nnpm error errno -39\nnpm error ENOTEMPTY: directory not empty, rename '/workspace/repo/node_modules/eslint-plugin-react' -> '/workspace/repo/node_modules/.eslint-plugin-react-BMm4yb7n'\nnpm error A complete log of this run can be found in: /tmp/tracefix-npm-cache/_logs/2026-09-27T12_10_12_164Z-debug-0.log"
+  },
+  {
+    "id": "695400f631b9",
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "Not able to route on project detail page.",
+    "status": "failed",
+    "createdAt": "2026-09-27T11:20:24.450Z",
+    "updatedAt": "2026-09-27T11:23:47.311Z",
+    "workspaceId": "d7cbea",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T11:20:24.457Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T11:20:34.778Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T11:20:34.788Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "failed",
+        "timestamp": "2026-09-27T11:23:47.309Z",
+        "detail": "npm error It is likely you do not have the permissions to access this file as the current user\nnpm error\nnpm error If you believe this might be a permissions issue, please double-check the\nnpm error p"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "error": "Failed to install dependencies: npm error It is likely you do not have the permissions to access this file as the current user\nnpm error\nnpm error If you believe this might be a permissions issue, please double-check the\nnpm error permissions of the file and its containing directories, or try running\nnpm error the command again as root/Administrator.\nnpm verbose cwd /workspace/repo\nnpm verbose os Linux 6.6.87.2-microsoft-standard-WSL2\nnpm verbose node v22.23.3\nnpm verbose npm  v10.9.9\nnpm verbose exit -13\nnpm verbose code -13\nnpm error A complete log of this run can be found in: /home/runner/.npm/_logs/2026-09-27T11_23_36_768Z-debug-0.log"
+  },
+  {
+    "id": "104c4b86fc3f",
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "Not able to route in project detail page.",
+    "status": "failed",
+    "createdAt": "2026-09-27T11:13:06.590Z",
+    "updatedAt": "2026-09-27T11:16:41.068Z",
+    "workspaceId": "7c0d6d",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T11:13:06.593Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T11:13:29.671Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T11:13:29.686Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "failed",
+        "timestamp": "2026-09-27T11:16:41.067Z",
+        "detail": "npm error It is likely you do not have the permissions to access this file as the current user\nnpm error\nnpm error If you believe this might be a permissions issue, please double-check the\nnpm error p"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "error": "Failed to install dependencies: npm error It is likely you do not have the permissions to access this file as the current user\nnpm error\nnpm error If you believe this might be a permissions issue, please double-check the\nnpm error permissions of the file and its containing directories, or try running\nnpm error the command again as root/Administrator.\nnpm verbose cwd /workspace/repo\nnpm verbose os Linux 6.6.87.2-microsoft-standard-WSL2\nnpm verbose node v22.23.3\nnpm verbose npm  v10.9.9\nnpm verbose exit -13\nnpm verbose code -13\nnpm error A complete log of this run can be found in: /home/runner/.npm/_logs/2026-09-27T11_16_31_477Z-debug-0.log"
+  },
+  {
+    "id": "5b4213baff15",
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "Detail project page routing issue. Not able to route to project detail page.",
+    "status": "failed",
+    "createdAt": "2026-09-27T11:05:46.250Z",
+    "updatedAt": "2026-09-27T11:09:04.620Z",
+    "workspaceId": "707813",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T11:05:46.254Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T11:05:51.341Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T11:05:51.349Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "failed",
+        "timestamp": "2026-09-27T11:09:04.616Z",
+        "detail": "npm error It is likely you do not have the permissions to access this file as the current user\nnpm error\nnpm error If you believe this might be a permissions issue, please double-check the\nnpm error p"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "error": "Failed to install dependencies: npm error It is likely you do not have the permissions to access this file as the current user\nnpm error\nnpm error If you believe this might be a permissions issue, please double-check the\nnpm error permissions of the file and its containing directories, or try running\nnpm error the command again as root/Administrator.\nnpm verbose cwd /workspace/repo\nnpm verbose os Linux 6.6.87.2-microsoft-standard-WSL2\nnpm verbose node v22.23.3\nnpm verbose npm  v10.9.9\nnpm verbose exit -13\nnpm verbose code -13\nnpm error A complete log of this run can be found in: /tmp/tracefix-npm-cache/_logs/2026-09-27T11_08_53_604Z-debug-0.log"
+  },
+  {
+    "id": "957bed7423fe",
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "Detail project page routing issue. Not able to route to project detail page.",
+    "status": "failed",
+    "createdAt": "2026-09-27T10:53:57.668Z",
+    "updatedAt": "2026-09-27T10:57:12.157Z",
+    "workspaceId": "3bb5c0",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:53:57.671Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:54:02.834Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:54:02.845Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "failed",
+        "timestamp": "2026-09-27T10:57:12.154Z",
+        "detail": "npm error The operation was rejected by your operating system.\nnpm error It is likely you do not have the permissions to access this file as the current user\nnpm error\nnpm error If you believe this mi"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "error": "Failed to install dependencies: npm error The operation was rejected by your operating system.\nnpm error It is likely you do not have the permissions to access this file as the current user\nnpm error\nnpm error If you believe this might be a permissions issue, please double-check the\nnpm error permissions of the file and its containing directories, or try running\nnpm error the command again as root/Administrator.\nnpm notice\nnpm notice New major version of npm available! 10.9.9 -> 12.1.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v12.1.0\nnpm notice To update run: npm install -g npm@12.1.0\nnpm notice\nnpm error A complete log of this run can be found in: /home/runner/.npm/_logs/2026-09-27T10_57_03_981Z-debug-0.log"
+  },
+  {
+    "id": "41e3ad152f52",
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "issue in the project section. detail project page routing is not working",
+    "status": "failed",
+    "createdAt": "2026-09-27T10:38:51.669Z",
+    "updatedAt": "2026-09-27T10:41:59.001Z",
+    "workspaceId": "7a982b",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:38:51.672Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:38:58.930Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:38:58.941Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "failed",
+        "timestamp": "2026-09-27T10:41:59.000Z",
+        "detail": ""
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "error": "Failed to install dependencies: "
+  },
+  {
+    "id": "a2b2458c618a",
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "Not able to route on detail project pages.",
+    "status": "failed",
+    "createdAt": "2026-09-27T10:31:05.471Z",
+    "updatedAt": "2026-09-27T10:34:10.396Z",
+    "workspaceId": "d8cd78",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:31:05.474Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:31:10.323Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:31:10.336Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "failed",
+        "timestamp": "2026-09-27T10:34:10.395Z",
+        "detail": "npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported\nnpm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-c"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "error": "Failed to install dependencies: npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported\nnpm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more"
+  },
+  {
+    "id": "61b589a5ce3b",
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "There is routing issue. I am not able to open the detail page of project.",
+    "status": "failed",
+    "createdAt": "2026-09-27T10:21:41.480Z",
+    "updatedAt": "2026-09-27T10:22:58.962Z",
+    "workspaceId": "4cc250",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:21:41.482Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:21:46.588Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:21:46.602Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "failed",
+        "timestamp": "2026-09-27T10:22:58.961Z",
+        "detail": "npm error Exit handler never called!\nnpm error This is an error with npm itself. Please report this error at:\nnpm error   <https://github.com/npm/cli/issues>\nnpm error A complete log of this run can b"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "error": "Failed to install dependencies: npm error Exit handler never called!\nnpm error This is an error with npm itself. Please report this error at:\nnpm error   <https://github.com/npm/cli/issues>\nnpm error A complete log of this run can be found in: /home/runner/.npm/_logs/2026-09-27T10_21_46_607Z-debug-0.log\n"
+  },
+  {
+    "id": "b262c8b7f9f0",
+    "repositoryId": "1383991979",
+    "repositoryName": "automyx-forge-lab",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/automyx-forge-lab.git",
+    "bugDescription": "There is problem in routing overall.",
+    "status": "failed",
+    "createdAt": "2026-09-27T10:13:22.677Z",
+    "updatedAt": "2026-09-27T10:16:30.112Z",
+    "workspaceId": "cbacc8",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:13:22.680Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:13:28.445Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:13:28.454Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "failed",
+        "timestamp": "2026-09-27T10:16:30.111Z",
+        "detail": "npm error code EUSAGE\nnpm error\nnpm error The `npm ci` command can only install with an existing package-lock.json or\nnpm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "react",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "error": "Failed to install dependencies"
+  },
+  {
+    "id": "246d220ba10a",
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "There is a bug in the website when I open the project detail screen it got crash.",
+    "status": "failed",
+    "createdAt": "2026-09-27T10:07:51.239Z",
+    "updatedAt": "2026-09-27T10:10:29.701Z",
+    "workspaceId": "ce99bd",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:07:51.243Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:07:57.280Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T10:07:57.296Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "failed",
+        "timestamp": "2026-09-27T10:10:29.701Z",
+        "detail": "npm error Exit handler never called!\nnpm error This is an error with npm itself. Please report this error at:\nnpm error   <https://github.com/npm/cli/issues>\nnpm error A complete log of this run can b"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    },
+    "error": "Failed to install dependencies"
+  }
+]

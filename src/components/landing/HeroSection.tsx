@@ -109,18 +109,18 @@ export default function HeroSection() {
         className="mt-10 flex items-center gap-3"
       >
         <Link
-          href="/dashboard"
+          href="/login"
           className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0f62fe] hover:bg-[#0353e9] text-white text-sm font-semibold rounded-lg transition-colors"
         >
           Start Investigation
           <ArrowRight size={15} aria-hidden="true" />
         </Link>
         <Link
-          href="/dashboard"
+          href="/login"
           className="inline-flex items-center gap-2 px-6 py-2.5 border border-[#1e1e2e] hover:border-[#2e2e40] text-[#9ca3af] hover:text-white text-sm font-medium rounded-lg transition-colors bg-[#111118] hover:bg-[#1a1a24]"
         >
           <Terminal size={14} aria-hidden="true" />
-          View Demo
+          Sign In
         </Link>
       </motion.div>
 

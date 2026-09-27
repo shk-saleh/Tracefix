@@ -1,69 +1,314 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import RepositoryCard from "@/components/dashboard/RepositoryCard";
-import BugReportCard from "@/components/dashboard/BugReportCard";
-import RightSidebarContent from "@/components/dashboard/RightSidebarContent";
-import InvestigationCenter from "@/components/investigation/InvestigationCenter";
-import { useInvestigation } from "@/hooks/useInvestigation";
-import { type RepositoryInfo } from "@/types/investigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Search,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  GitBranch,
+  ArrowRight,
+  Play,
+  FileText,
+  XCircle,
+  Loader2,
+} from "lucide-react";
+import Link from "next/link";
 
-// Dev fixture — replaced by real API data in Sub-Task 10
-const DEMO_REPO: RepositoryInfo = {
-  name: "acme-corp/payment-service",
-  url: "https://github.com/acme-corp/payment-service",
-  language: "TypeScript",
-  branch: "main",
-  fileCount: 247,
-  testCount: 84,
-  status: "connected",
-};
+interface SessionUser {
+  login: string;
+  name: string | null;
+  avatarUrl: string;
+}
+
+interface Investigation {
+  id: string;
+  repositoryName: string;
+  owner: string;
+  bugDescription: string;
+  status: string;
+  createdAt: string;
+}
+
+interface Stats {
+  total: number;
+  completed: number;
+  failed: number;
+  running: number;
+}
+
+function StatCard({
+  label,
+  value,
+  icon: Icon,
+  color,
+}: {
+  label: string;
+  value: number | string;
+  icon: React.ElementType;
+  color: string;
+}) {
+  return (
+    <div className="flex flex-col gap-3 px-5 py-4 bg-[#111118] border border-[#1e1e2e] rounded-xl">
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-[#6b7280] font-medium tracking-wide uppercase">
+          {label}
+        </span>
+        <span className={`p-1.5 rounded-md bg-[#1e1e2e] ${color}`}>
+          <Icon size={13} aria-hidden="true" />
+        </span>
+      </div>
+      <span className="font-mono text-2xl font-bold text-white">{value}</span>
+    </div>
+  );
+}
+
+function statusConfig(status: string) {
+  switch (status) {
+    case "completed":
+      return { Icon: CheckCircle2, label: "Completed", color: "text-[#22c55e]" };
+    case "failed":
+      return { Icon: AlertCircle, label: "Failed", color: "text-[#ef4444]" };
+    case "cancelled":
+      return { Icon: XCircle, label: "Cancelled", color: "text-[#6b7280]" };
+    default:
+      return { Icon: Loader2, label: "Running", color: "text-[#0f62fe]" };
+  }
+}
+
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  const diffDays = Math.floor((Date.now() - d.getTime()) / 86_400_000);
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 30) return `${diffDays}d ago`;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
 
 export default function DashboardPage() {
-  const { start, isLoading, status, error } = useInvestigation();
+  const router = useRouter();
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [investigations, setInvestigations] = useState<Investigation[]>([]);
+  const [stats, setStats] = useState<Stats>({ total: 0, completed: 0, failed: 0, running: 0 });
+  const [loading, setLoading] = useState(true);
 
-  async function handleSubmit(description: string) {
-    await start(DEMO_REPO.url, description);
-  }
+  useEffect(() => {
+    async function load() {
+      const [sessionRes, invRes] = await Promise.allSettled([
+        fetch("/api/auth/session"),
+        fetch("/api/investigations"),
+      ]);
+
+      if (sessionRes.status === "fulfilled" && sessionRes.value.ok) {
+        const d = await sessionRes.value.json();
+        if (d.authenticated) setUser(d.user);
+      }
+
+      if (invRes.status === "fulfilled" && invRes.value.ok) {
+        const d = await invRes.value.json();
+        const list: Investigation[] = d.investigations ?? [];
+        setInvestigations(list.slice(0, 5));
+        setStats({
+          total: list.length,
+          completed: list.filter((i) => i.status === "completed").length,
+          failed: list.filter((i) => i.status === "failed").length,
+          running: list.filter((i) => i.status === "running" || i.status === "pending").length,
+        });
+      }
+
+      setLoading(false);
+    }
+    void load();
+  }, []);
 
   return (
-    <>
-      {/* Main content */}
-      <div className="flex flex-col gap-5">
-        <AnimatePresence mode="wait">
-          {!status ? (
-            <motion.div
-              key="pre"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="flex flex-col gap-5 max-w-2xl"
-            >
-              <RepositoryCard repo={DEMO_REPO} />
-              <BugReportCard onSubmit={handleSubmit} isLoading={isLoading} />
-              {error && (
-                <p className="text-xs text-[#ef4444] px-1">{error}</p>
-              )}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="active"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-            >
-              <InvestigationCenter status={status} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+    <div className="flex flex-col gap-8 max-w-4xl">
+      {/* Welcome header */}
+      <div className="flex flex-col gap-1">
+        <h1 className="text-lg font-semibold text-white">
+          {user ? `Welcome back, ${user.name ?? user.login}` : "Dashboard"}
+        </h1>
+        <p className="text-sm text-[#6b7280]">
+          AI-powered bug investigation and root-cause analysis.
+        </p>
       </div>
 
-      {/* Right sidebar — fixed overlay populated with live investigation data */}
-      <aside className="fixed right-0 top-14 bottom-0 w-[280px] border-l border-[#1e1e2e] bg-[#0a0a0f] overflow-y-auto z-40">
-        <RightSidebarContent status={status} />
-      </aside>
-    </>
+      {/* KPI row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <StatCard
+          label="Total Investigations"
+          value={loading ? "—" : stats.total}
+          icon={Search}
+          color="text-[#9ca3af]"
+        />
+        <StatCard
+          label="Completed"
+          value={loading ? "—" : stats.completed}
+          icon={CheckCircle2}
+          color="text-[#22c55e]"
+        />
+        <StatCard
+          label="Running"
+          value={loading ? "—" : stats.running}
+          icon={Clock}
+          color="text-[#0f62fe]"
+        />
+        <StatCard
+          label="Failed"
+          value={loading ? "—" : stats.failed}
+          icon={AlertCircle}
+          color="text-[#ef4444]"
+        />
+      </div>
+
+      {/* Quick actions */}
+      <div className="flex flex-col gap-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-[#6b7280]">
+          Quick Actions
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Start new audit */}
+          <button
+            onClick={() => router.push("/repositories")}
+            className="group flex items-center gap-3 px-5 py-4 bg-[#0f62fe] hover:bg-[#0353e9] rounded-xl transition-colors text-left"
+          >
+            <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+              <Play size={15} className="text-white" aria-hidden="true" />
+            </span>
+            <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+              <span className="text-sm font-semibold text-white">Start Audit</span>
+              <span className="text-[11px] text-[#93bbff]">
+                Select a repo &amp; describe the bug
+              </span>
+            </div>
+            <ArrowRight
+              size={14}
+              className="text-white/60 group-hover:translate-x-0.5 transition-transform flex-shrink-0"
+              aria-hidden="true"
+            />
+          </button>
+
+          {/* View investigations */}
+          <Link
+            href="/history"
+            className="group flex items-center gap-3 px-5 py-4 bg-[#111118] hover:bg-[#1a1a24] border border-[#1e1e2e] hover:border-[#2a2a3a] rounded-xl transition-colors"
+          >
+            <span className="w-8 h-8 rounded-lg bg-[#1e1e2e] flex items-center justify-center flex-shrink-0">
+              <Search size={15} className="text-[#6b7280]" aria-hidden="true" />
+            </span>
+            <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+              <span className="text-sm font-medium text-white">Investigations</span>
+              <span className="text-[11px] text-[#6b7280]">Browse all runs</span>
+            </div>
+            <ArrowRight
+              size={14}
+              className="text-[#6b7280] group-hover:text-white flex-shrink-0 transition-colors"
+              aria-hidden="true"
+            />
+          </Link>
+
+          {/* Reports */}
+          <Link
+            href="/reports"
+            className="group flex items-center gap-3 px-5 py-4 bg-[#111118] hover:bg-[#1a1a24] border border-[#1e1e2e] hover:border-[#2a2a3a] rounded-xl transition-colors"
+          >
+            <span className="w-8 h-8 rounded-lg bg-[#1e1e2e] flex items-center justify-center flex-shrink-0">
+              <FileText size={15} className="text-[#6b7280]" aria-hidden="true" />
+            </span>
+            <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+              <span className="text-sm font-medium text-white">Reports</span>
+              <span className="text-[11px] text-[#6b7280]">Verified fix reports</span>
+            </div>
+            <ArrowRight
+              size={14}
+              className="text-[#6b7280] group-hover:text-white flex-shrink-0 transition-colors"
+              aria-hidden="true"
+            />
+          </Link>
+        </div>
+      </div>
+
+      {/* Recent investigations */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-[#6b7280]">
+            Recent Investigations
+          </h2>
+          <Link
+            href="/history"
+            className="text-xs text-[#0f62fe] hover:text-[#93bbff] transition-colors"
+          >
+            View all →
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className="flex flex-col gap-2">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-[62px] bg-[#111118] border border-[#1e1e2e] rounded-xl animate-pulse"
+              />
+            ))}
+          </div>
+        ) : investigations.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 py-12 bg-[#111118] border border-[#1e1e2e] rounded-xl text-center">
+            <div className="w-10 h-10 rounded-xl bg-[#1e1e2e] flex items-center justify-center">
+              <GitBranch size={18} className="text-[#6b7280]" />
+            </div>
+            <div>
+              <p className="text-sm text-white font-medium">No investigations yet</p>
+              <p className="text-xs text-[#6b7280] mt-1">
+                Click &ldquo;Start Audit&rdquo; to investigate your first bug.
+              </p>
+            </div>
+            <button
+              onClick={() => router.push("/repositories")}
+              className="flex items-center gap-1.5 px-4 py-2 bg-[#0f62fe] hover:bg-[#0353e9] text-white text-xs font-medium rounded-lg transition-colors"
+            >
+              <Play size={12} />
+              Start Audit
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {investigations.map((inv) => {
+              const { Icon, label, color } = statusConfig(inv.status);
+              return (
+                <Link
+                  key={inv.id}
+                  href={`/investigations/${inv.id}`}
+                  className="group flex items-center gap-4 px-5 py-3.5 bg-[#111118] border border-[#1e1e2e] hover:border-[#0f62fe]/30 rounded-xl transition-colors"
+                >
+                  <Icon
+                    size={15}
+                    className={`${color} flex-shrink-0 ${inv.status === "running" || inv.status === "pending" ? "animate-spin" : ""}`}
+                    aria-hidden="true"
+                  />
+                  <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                    <span className="text-sm font-medium text-white truncate">
+                      {inv.owner}/{inv.repositoryName}
+                    </span>
+                    <span className="text-xs text-[#6b7280] truncate">
+                      {inv.bugDescription}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <span className={`text-xs font-medium ${color}`}>{label}</span>
+                    <span className="text-xs text-[#4b5563]">{formatDate(inv.createdAt)}</span>
+                    <ArrowRight
+                      size={13}
+                      className="text-[#6b7280] group-hover:text-[#0f62fe] transition-colors"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

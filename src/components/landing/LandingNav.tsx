@@ -35,13 +35,13 @@ export default function LandingNav() {
       {/* Right nav */}
       <nav className="flex items-center gap-1" aria-label="Landing navigation">
         <Link
-          href="/dashboard"
+          href="/login"
           className="px-3 py-1.5 text-sm text-[#9ca3af] hover:text-white transition-colors rounded-md hover:bg-[#111118]"
         >
           Sign In
         </Link>
         <Link
-          href="/dashboard"
+          href="/login"
           className="px-4 py-1.5 text-sm font-medium text-white bg-[#0f62fe] hover:bg-[#0353e9] rounded-md transition-colors"
         >
           Dashboard
