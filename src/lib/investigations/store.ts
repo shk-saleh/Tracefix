@@ -62,6 +62,10 @@ export function listInvestigations(): Investigation[] {
   return readAll();
 }
 
+export function listInvestigationsByUser(githubUserId: number): Investigation[] {
+  return readAll().filter((i) => i.githubUserId === githubUserId);
+}
+
 export function deleteInvestigation(id: string): boolean {
   const items = readAll();
   const filtered = items.filter((i) => i.id !== id);

@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/session";
 import { startInvestigation } from "@/lib/investigations/service";
-import { listInvestigations } from "@/lib/investigations/store";
+import { listInvestigationsByUser } from "@/lib/investigations/store";
 
 const CreateSchema = z.object({
   repositoryId: z.string().min(1),
@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
   try {
     const investigation = startInvestigation({
       ...data,
+      githubUserId: session.githubUserId,
       githubAccessToken: session.githubAccessToken,
     });
 
@@ -62,6 +63,6 @@ export async function GET() {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const investigations = listInvestigations();
+  const investigations = listInvestigationsByUser(session.githubUserId);
   return NextResponse.json({ investigations });
 }

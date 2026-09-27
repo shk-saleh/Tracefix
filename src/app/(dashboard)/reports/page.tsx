@@ -28,9 +28,9 @@ function statusConfig(status: string) {
     case "failed":
       return { Icon: AlertCircle, label: "Failed", color: "text-[#ef4444]", bg: "bg-[#ef4444]/10" };
     case "cancelled":
-      return { Icon: XCircle, label: "Cancelled", color: "text-[#6b7280]", bg: "bg-[#6b7280]/10" };
+      return { Icon: XCircle, label: "Cancelled", color: "text-[#6F7078]", bg: "bg-white/[0.05]" };
     default:
-      return { Icon: Loader2, label: "In Progress", color: "text-[#0f62fe]", bg: "bg-[#0f62fe]/10" };
+      return { Icon: Loader2, label: "In Progress", color: "text-[#5865F2]", bg: "bg-[#5865F2]/10" };
   }
 }
 
@@ -72,22 +72,22 @@ export default function ReportsPage() {
   return (
     <div className="flex flex-col gap-6 max-w-3xl">
       <div className="flex flex-col gap-1">
-        <h1 className="text-lg font-semibold text-white">Reports</h1>
-        <p className="text-sm text-[#6b7280]">
+        <h1 className="text-[17px] font-semibold text-[#F5F5F5] tracking-tight">Reports</h1>
+        <p className="text-[13px] text-[#6F7078]">
           Investigation reports and analysis summaries.
         </p>
       </div>
 
       {error && (
-        <div className="px-4 py-3 bg-[#ef4444]/10 border border-[#ef4444]/20 rounded-xl text-sm text-[#ef4444]">
+        <div className="px-4 py-3 bg-[#ef4444]/8 border border-[#ef4444]/20 rounded-xl text-[13px] text-[#ef4444]">
           {error}
         </div>
       )}
 
       {loading && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           {[1, 2].map((i) => (
-            <div key={i} className="h-[68px] bg-[#111118] border border-[#1e1e2e] rounded-xl animate-pulse" />
+            <div key={i} className="h-[64px] bg-[#19191C] border border-white/[0.06] rounded-xl animate-pulse" />
           ))}
         </div>
       )}
@@ -96,36 +96,36 @@ export default function ReportsPage() {
         <>
           {investigations.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
-              <FileText size={20} className="text-[#6b7280]" />
-              <p className="text-sm text-white font-medium">No reports yet</p>
-              <p className="text-xs text-[#6b7280]">
+              <FileText size={18} className="text-[#6F7078]" />
+              <p className="text-[13px] text-[#F5F5F5] font-medium">No reports yet</p>
+              <p className="text-[12px] text-[#6F7078]">
                 Completed investigations will appear here.
               </p>
-              <Link href="/repositories" className="text-xs text-[#0f62fe] hover:text-[#93bbff] transition-colors">
+              <Link href="/repositories" className="text-[12px] text-[#5865F2] hover:text-[#7c87f5] transition-colors">
                 Start an Investigation →
               </Link>
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               {investigations.map((item) => {
                 const cfg = statusConfig(item.status);
                 const Icon = cfg.Icon;
                 return (
                   <div
                     key={item.id}
-                    className="flex items-center gap-4 px-5 py-4 bg-[#111118] border border-[#1e1e2e] rounded-xl hover:border-[#2a2a3a] transition-colors"
+                    className="flex items-center gap-4 px-4 py-3.5 bg-[#19191C] border border-white/[0.07] rounded-xl hover:border-white/[0.12] transition-all duration-150"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-[#0f62fe]/10 flex items-center justify-center flex-shrink-0">
-                      <FileText size={15} className="text-[#0f62fe]" />
+                    <div className="w-7 h-7 rounded-lg bg-[#5865F2]/10 flex items-center justify-center flex-shrink-0">
+                      <FileText size={14} className="text-[#5865F2]" />
                     </div>
 
                     <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                      <span className="text-sm font-medium text-white truncate">
+                      <span className="text-[13px] font-medium text-[#F5F5F5] truncate">
                         {item.bugDescription.length > 80
                           ? item.bugDescription.slice(0, 80) + "…"
                           : item.bugDescription}
                       </span>
-                      <div className="flex items-center gap-3 text-[11px] text-[#6b7280]">
+                      <div className="flex items-center gap-3 text-[11px] text-[#6F7078]">
                         <span>{item.owner}/{item.repositoryName}</span>
                         <span className="flex items-center gap-1">
                           <Clock size={10} />
@@ -141,7 +141,7 @@ export default function ReportsPage() {
 
                     <Link
                       href={`/report/${item.id}`}
-                      className="flex items-center gap-1 text-[11px] text-[#0f62fe] hover:text-[#93bbff] transition-colors flex-shrink-0"
+                      className="flex items-center gap-1 text-[11px] text-[#5865F2] hover:text-[#7c87f5] transition-colors flex-shrink-0"
                     >
                       <ExternalLink size={12} />
                       View

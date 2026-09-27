@@ -19,7 +19,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
   const { id } = await params;
   const investigation = getInvestigation(id);
 
-  if (!investigation) {
+  if (!investigation || investigation.githubUserId !== session.githubUserId) {
     return NextResponse.json({ error: "Investigation not found" }, { status: 404 });
   }
 
@@ -35,7 +35,7 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
   const { id } = await params;
   const investigation = getInvestigation(id);
 
-  if (!investigation) {
+  if (!investigation || investigation.githubUserId !== session.githubUserId) {
     return NextResponse.json({ error: "Investigation not found" }, { status: 404 });
   }
 

@@ -18,7 +18,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
   const { id } = await params;
   const investigation = getInvestigation(id);
 
-  if (!investigation) {
+  if (!investigation || investigation.githubUserId !== session.githubUserId) {
     return NextResponse.json({ error: "Investigation not found" }, { status: 404 });
   }
 

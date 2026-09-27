@@ -43,9 +43,9 @@ function statusConfig(status: string) {
     case "failed":
       return { Icon: AlertCircle, label: "Failed", color: "text-[#ef4444]", bg: "bg-[#ef4444]/10" };
     case "cancelled":
-      return { Icon: XCircle, label: "Cancelled", color: "text-[#6b7280]", bg: "bg-[#6b7280]/10" };
+      return { Icon: XCircle, label: "Cancelled", color: "text-[#6F7078]", bg: "bg-white/[0.05]" };
     default:
-      return { Icon: Loader2, label: "Running", color: "text-[#0f62fe]", bg: "bg-[#0f62fe]/10" };
+      return { Icon: Loader2, label: "Running", color: "text-[#5865F2]", bg: "bg-[#5865F2]/10" };
   }
 }
 
@@ -92,17 +92,17 @@ export default function HistoryPage() {
     return (
       <div className="flex flex-col gap-6 max-w-3xl">
         <div className="flex flex-col gap-1">
-          <h1 className="text-lg font-semibold text-white">Investigation History</h1>
-          <p className="text-sm text-[#6b7280]">Connect GitHub to see investigation history.</p>
+          <h1 className="text-[17px] font-semibold text-[#F5F5F5] tracking-tight">Investigation History</h1>
+          <p className="text-[13px] text-[#6F7078]">Connect GitHub to see investigation history.</p>
         </div>
-        <div className="flex flex-col items-center gap-4 py-12 bg-[#111118] border border-[#1e1e2e] rounded-xl">
-          <Github size={22} className="text-[#6b7280]" />
-          <p className="text-sm text-[#6b7280]">Please connect your GitHub account first.</p>
+        <div className="flex flex-col items-center gap-4 py-12 bg-[#19191C] border border-white/[0.07] rounded-xl">
+          <Github size={20} className="text-[#6F7078]" />
+          <p className="text-[13px] text-[#6F7078]">Please connect your GitHub account first.</p>
           <a
             href="/api/auth/github/login"
-            className="flex items-center gap-2 px-4 py-2 bg-[#0f62fe] hover:bg-[#0f62fe]/90 text-white text-sm font-medium rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-[#5865F2] hover:bg-[#4752c4] text-white text-[13px] font-medium rounded-lg transition-colors"
           >
-            <Github size={15} />
+            <Github size={14} />
             Connect GitHub
           </a>
         </div>
@@ -113,8 +113,8 @@ export default function HistoryPage() {
   return (
     <div className="flex flex-col gap-6 max-w-3xl">
       <div className="flex flex-col gap-1">
-        <h1 className="text-lg font-semibold text-white">Investigation History</h1>
-        <p className="text-sm text-[#6b7280]">
+        <h1 className="text-[17px] font-semibold text-[#F5F5F5] tracking-tight">Investigation History</h1>
+        <p className="text-[13px] text-[#6F7078]">
           {loading
             ? "Loading investigations…"
             : `${investigations.length} investigation${investigations.length !== 1 ? "s" : ""}`}
@@ -123,26 +123,26 @@ export default function HistoryPage() {
 
       {/* Search */}
       <div className="relative">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6b7280]" />
+        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6F7078]" />
         <input
           type="text"
           placeholder="Search investigations…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 bg-[#111118] border border-[#1e1e2e] rounded-xl text-sm text-white placeholder:text-[#6b7280] focus:outline-none focus:border-[#0f62fe] transition-colors"
+          className="w-full pl-9 pr-4 py-2 bg-[#19191C] border border-white/[0.07] rounded-xl text-[13px] text-[#F5F5F5] placeholder:text-[#6F7078] focus:outline-none focus:border-[#5865F2]/50 transition-colors"
         />
       </div>
 
       {error && (
-        <div className="px-4 py-3 bg-[#ef4444]/10 border border-[#ef4444]/20 rounded-xl text-sm text-[#ef4444]">
+        <div className="px-4 py-3 bg-[#ef4444]/8 border border-[#ef4444]/20 rounded-xl text-[13px] text-[#ef4444]">
           {error}
         </div>
       )}
 
       {loading && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-[68px] bg-[#111118] border border-[#1e1e2e] rounded-xl animate-pulse" />
+            <div key={i} className="h-[64px] bg-[#19191C] border border-white/[0.06] rounded-xl animate-pulse" />
           ))}
         </div>
       )}
@@ -151,20 +151,20 @@ export default function HistoryPage() {
         <>
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
-              <Play size={20} className="text-[#6b7280]" />
-              <p className="text-sm text-white font-medium">No investigations yet</p>
-              <p className="text-xs text-[#6b7280]">
+              <Play size={18} className="text-[#6F7078]" />
+              <p className="text-[13px] text-[#F5F5F5] font-medium">No investigations yet</p>
+              <p className="text-[12px] text-[#6F7078]">
                 Select a repository and start your first investigation.
               </p>
               <Link
                 href="/repositories"
-                className="text-xs text-[#0f62fe] hover:text-[#93bbff] transition-colors"
+                className="text-[12px] text-[#5865F2] hover:text-[#7c87f5] transition-colors"
               >
                 Browse Repositories →
               </Link>
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               {filtered.map((item) => {
                 const cfg = statusConfig(item.status);
                 const Icon = cfg.Icon;
@@ -173,23 +173,23 @@ export default function HistoryPage() {
                   <Link
                     key={item.id}
                     href={`/investigations/${item.id}`}
-                    className="group flex items-center gap-4 px-5 py-4 bg-[#111118] border border-[#1e1e2e] rounded-xl hover:border-[#2a2a3a] transition-colors"
+                    className="group flex items-center gap-4 px-4 py-3.5 bg-[#19191C] border border-white/[0.07] rounded-xl hover:border-white/[0.13] transition-all duration-150"
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${cfg.bg}`}>
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${cfg.bg}`}>
                       <Icon
-                        size={15}
+                        size={14}
                         className={`${cfg.color} ${isRunning ? "animate-spin" : ""}`}
                         aria-hidden="true"
                       />
                     </div>
 
                     <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                      <span className="text-sm font-medium text-white truncate">
+                      <span className="text-[13px] font-medium text-[#F5F5F5] truncate">
                         {item.bugDescription.length > 80
                           ? item.bugDescription.slice(0, 80) + "…"
                           : item.bugDescription}
                       </span>
-                      <div className="flex items-center gap-3 text-[11px] text-[#6b7280]">
+                      <div className="flex items-center gap-3 text-[11px] text-[#6F7078]">
                         <span className="flex items-center gap-1">
                           <Search size={10} />
                           {item.owner}/{item.repositoryName}

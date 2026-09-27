@@ -92,6 +92,7 @@ function installError(output: string): string {
   return (lines.slice(-12).join("\n") || "No installer output was returned.").slice(0, 1_200);
 }
 export interface StartInvestigationInput {
+  githubUserId: number;
   repositoryId: string;
   repositoryName: string;
   owner: string;
@@ -112,6 +113,7 @@ export function startInvestigation(input: StartInvestigationInput): Investigatio
 
   const investigation: Investigation = {
     id,
+    githubUserId: input.githubUserId,
     repositoryId: input.repositoryId,
     repositoryName: input.repositoryName,
     owner: input.owner,
@@ -372,13 +374,13 @@ async function runPipeline(
   }
 }
 
-export function retryInvestigation(id: string, githubToken: string): Investigation {
+export function retryInvestigation(id: string, githubUserId: number, githubToken: string): Investigation {
   if (activeInvestigations.has(id)) {
     throw new Error("This investigation is already running");
   }
 
   const investigation = getInvestigation(id);
-  if (!investigation) throw new Error("Investigation not found");
+  if (!investigation || investigation.githubUserId !== githubUserId) throw new Error("Investigation not found");
   if (investigation.status !== "failed" && investigation.status !== "cancelled") {
     throw new Error("Only failed or cancelled investigations can be retried");
   }

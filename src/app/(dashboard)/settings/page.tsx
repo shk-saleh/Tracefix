@@ -40,7 +40,7 @@ interface AIStatus {
 function StatusDot({ ok }: { ok: boolean }) {
   return (
     <span
-      className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${
+      className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 ${
         ok ? "bg-[#22c55e]" : "bg-[#ef4444]"
       }`}
     />
@@ -97,46 +97,45 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-8 max-w-2xl">
+    <div className="flex flex-col gap-7 max-w-2xl">
       <div className="flex flex-col gap-1">
-        <h1 className="text-lg font-semibold text-white">Settings</h1>
-        <p className="text-sm text-[#6b7280]">
+        <h1 className="text-[17px] font-semibold text-[#F5F5F5] tracking-tight">Settings</h1>
+        <p className="text-[13px] text-[#6F7078]">
           Manage your account preferences and integrations.
         </p>
       </div>
 
       {/* GitHub Section */}
       <div className="flex flex-col gap-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-[#6b7280]">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#6F7078]">
           GitHub
         </h2>
-        <div className="bg-[#111118] border border-[#1e1e2e] rounded-xl overflow-hidden">
+        <div className="bg-[#19191C] border border-white/[0.07] rounded-xl overflow-hidden">
           {loadingUser ? (
-            <div className="px-5 py-4 flex items-center gap-2 text-[#6b7280]">
-              <Loader2 size={14} className="animate-spin" />
-              <span className="text-sm">Loading account…</span>
+            <div className="px-5 py-4 flex items-center gap-2 text-[#6F7078]">
+              <Loader2 size={13} className="animate-spin" />
+              <span className="text-[13px]">Loading account…</span>
             </div>
           ) : user ? (
             <>
-              <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e1e2e]">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
                 <div className="flex items-center gap-3">
-                  {/* Avatar */}
                   <Image
                     src={user.avatarUrl}
                     alt={user.login}
-                    width={32}
-                    height={32}
-                    className="rounded-full border border-[#1e1e2e]"
+                    width={30}
+                    height={30}
+                    className="rounded-full border border-white/[0.1]"
                     unoptimized
                   />
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-[13px] font-medium text-[#F5F5F5]">
                       {user.name ?? user.login}
                     </span>
-                    <span className="text-xs text-[#6b7280]">@{user.login}</span>
+                    <span className="text-[11px] text-[#6F7078]">@{user.login}</span>
                   </div>
                 </div>
-                <span className="flex items-center text-xs text-[#22c55e]">
+                <span className="flex items-center text-[11px] text-[#22c55e]">
                   <StatusDot ok={true} />
                   Connected
                 </span>
@@ -145,12 +144,12 @@ export default function SettingsPage() {
                 <button
                   onClick={handleLogout}
                   disabled={loggingOut}
-                  className="flex items-center gap-1.5 text-xs text-[#ef4444] hover:text-[#ef4444]/80 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1.5 text-[12px] text-[#ef4444] hover:text-[#ef4444]/70 transition-colors disabled:opacity-40"
                 >
                   {loggingOut ? (
-                    <Loader2 size={12} className="animate-spin" />
+                    <Loader2 size={11} className="animate-spin" />
                   ) : (
-                    <LogOut size={12} />
+                    <LogOut size={11} />
                   )}
                   Disconnect GitHub
                 </button>
@@ -158,15 +157,15 @@ export default function SettingsPage() {
             </>
           ) : (
             <div className="flex items-center justify-between px-5 py-4">
-              <div className="flex items-center gap-2 text-[#6b7280]">
-                <Github size={16} />
-                <span className="text-sm">Not connected</span>
+              <div className="flex items-center gap-2 text-[#6F7078]">
+                <Github size={15} />
+                <span className="text-[13px]">Not connected</span>
               </div>
               <a
                 href="/api/auth/github/login"
-                className="flex items-center gap-1.5 text-xs text-[#0f62fe] hover:text-[#93bbff] transition-colors"
+                className="flex items-center gap-1.5 text-[12px] text-[#5865F2] hover:text-[#7c87f5] transition-colors"
               >
-                <Github size={12} />
+                <Github size={11} />
                 Connect GitHub
               </a>
             </div>
@@ -177,37 +176,37 @@ export default function SettingsPage() {
       {/* Runner Section */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-[#6b7280]">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#6F7078]">
             Runner
           </h2>
           <button
             onClick={loadAll}
-            className="flex items-center gap-1 text-[11px] text-[#6b7280] hover:text-white transition-colors"
+            className="flex items-center gap-1 text-[11px] text-[#6F7078] hover:text-[#9A9AA3] transition-colors"
           >
             <RefreshCw size={10} />
             Refresh
           </button>
         </div>
-        <div className="bg-[#111118] border border-[#1e1e2e] rounded-xl overflow-hidden divide-y divide-[#1e1e2e]">
-          <div className="flex items-center justify-between px-5 py-3.5">
-            <span className="text-sm text-[#9ca3af]">Runner Mode</span>
+        <div className="bg-[#19191C] border border-white/[0.07] rounded-xl overflow-hidden divide-y divide-white/[0.05]">
+          <div className="flex items-center justify-between px-5 py-3">
+            <span className="text-[13px] text-[#9A9AA3]">Runner Mode</span>
             {loadingRunner ? (
-              <Loader2 size={14} className="animate-spin text-[#6b7280]" />
+              <Loader2 size={13} className="animate-spin text-[#6F7078]" />
             ) : (
-              <span className="text-sm font-medium text-white capitalize">
+              <span className="text-[13px] font-medium text-[#F5F5F5] capitalize">
                 {runnerStatus?.mode ?? "unknown"}
               </span>
             )}
           </div>
-          <div className="flex items-center justify-between px-5 py-3.5">
+          <div className="flex items-center justify-between px-5 py-3">
             <div className="flex items-center gap-2">
-              <Container size={14} className="text-[#6b7280]" />
-              <span className="text-sm text-[#9ca3af]">Docker</span>
+              <Container size={13} className="text-[#6F7078]" />
+              <span className="text-[13px] text-[#9A9AA3]">Docker</span>
             </div>
             {loadingRunner ? (
-              <Loader2 size={14} className="animate-spin text-[#6b7280]" />
+              <Loader2 size={13} className="animate-spin text-[#6F7078]" />
             ) : (
-              <span className={`text-sm font-medium flex items-center ${runnerStatus?.available ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
+              <span className={`text-[13px] font-medium flex items-center ${runnerStatus?.available ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
                 <StatusDot ok={runnerStatus?.available ?? false} />
                 {runnerStatus?.available
                   ? `v${runnerStatus.dockerVersion ?? "?"}`
@@ -217,7 +216,7 @@ export default function SettingsPage() {
           </div>
         </div>
         {!loadingRunner && !runnerStatus?.available && (
-          <p className="text-xs text-[#f59e0b] px-1">
+          <p className="text-[12px] text-[#f59e0b] px-1">
             Docker is not running. Start Docker Desktop and refresh.
           </p>
         )}
@@ -225,73 +224,73 @@ export default function SettingsPage() {
 
       {/* AI Section */}
       <div className="flex flex-col gap-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-[#6b7280]">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#6F7078]">
           AI
         </h2>
-        <div className="bg-[#111118] border border-[#1e1e2e] rounded-xl overflow-hidden divide-y divide-[#1e1e2e]">
-          <div className="flex items-center justify-between px-5 py-3.5">
-            <span className="text-sm text-[#9ca3af]">Provider</span>
-            <span className="text-sm font-medium text-white capitalize">
+        <div className="bg-[#19191C] border border-white/[0.07] rounded-xl overflow-hidden divide-y divide-white/[0.05]">
+          <div className="flex items-center justify-between px-5 py-3">
+            <span className="text-[13px] text-[#9A9AA3]">Provider</span>
+            <span className="text-[13px] font-medium text-[#F5F5F5] capitalize">
               {aiStatus?.provider ?? "Ollama"}
             </span>
           </div>
-          <div className="flex items-center justify-between px-5 py-3.5">
-            <span className="text-sm text-[#9ca3af]">Endpoint</span>
-            <span className="text-xs font-mono text-[#9ca3af] truncate max-w-[220px]">
+          <div className="flex items-center justify-between px-5 py-3">
+            <span className="text-[13px] text-[#9A9AA3]">Endpoint</span>
+            <span className="text-[11px] font-mono text-[#9A9AA3] truncate max-w-[220px]">
               {aiStatus?.baseUrl ?? "http://localhost:11434"}
             </span>
           </div>
-          <div className="flex items-center justify-between px-5 py-3.5">
-            <span className="text-sm text-[#9ca3af]">Model</span>
-            <span className="text-sm font-mono text-white">
+          <div className="flex items-center justify-between px-5 py-3">
+            <span className="text-[13px] text-[#9A9AA3]">Model</span>
+            <span className="text-[13px] font-mono text-[#F5F5F5]">
               {aiStatus?.model ?? "—"}
             </span>
           </div>
-          <div className="flex items-center justify-between px-5 py-3.5">
-            <span className="text-sm text-[#9ca3af]">API Key</span>
+          <div className="flex items-center justify-between px-5 py-3">
+            <span className="text-[13px] text-[#9A9AA3]">API Key</span>
             {loadingAI ? (
-              <Loader2 size={14} className="animate-spin text-[#6b7280]" />
+              <Loader2 size={13} className="animate-spin text-[#6F7078]" />
             ) : aiStatus?.apiKeyConfigured ? (
-              <span className="flex items-center text-xs text-[#22c55e]">
+              <span className="flex items-center text-[11px] text-[#22c55e]">
                 <StatusDot ok={true} />
                 Configured
               </span>
             ) : (
-              <span className="flex items-center text-xs text-[#f59e0b]">
-                <span className="inline-block w-1.5 h-1.5 rounded-full mr-2 bg-[#f59e0b]" />
+              <span className="flex items-center text-[11px] text-[#f59e0b]">
+                <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 bg-[#f59e0b]" />
                 Not set — required for cloud Ollama
               </span>
             )}
           </div>
-          <div className="flex items-center justify-between px-5 py-3.5">
+          <div className="flex items-center justify-between px-5 py-3">
             <div className="flex items-center gap-2">
-              <Cpu size={14} className="text-[#6b7280]" />
-              <span className="text-sm text-[#9ca3af]">Status</span>
+              <Cpu size={13} className="text-[#6F7078]" />
+              <span className="text-[13px] text-[#9A9AA3]">Status</span>
             </div>
             {loadingAI ? (
-              <Loader2 size={14} className="animate-spin text-[#6b7280]" />
+              <Loader2 size={13} className="animate-spin text-[#6F7078]" />
             ) : (
-              <span className={`text-sm font-medium flex items-center ${aiStatus?.available ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
+              <span className={`text-[13px] font-medium flex items-center ${aiStatus?.available ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
                 <StatusDot ok={aiStatus?.available ?? false} />
                 {aiStatus?.available ? "Connected" : aiStatus?.error ?? "Offline"}
               </span>
             )}
           </div>
           {aiStatus?.available && aiStatus.models && aiStatus.models.length > 0 && (
-            <div className="px-5 py-3.5">
-              <span className="text-xs text-[#6b7280]">Available models: </span>
-              <span className="text-xs font-mono text-[#9ca3af]">
+            <div className="px-5 py-3">
+              <span className="text-[11px] text-[#6F7078]">Available models: </span>
+              <span className="text-[11px] font-mono text-[#9A9AA3]">
                 {aiStatus.models.slice(0, 5).join(", ")}
               </span>
             </div>
           )}
         </div>
         {!loadingAI && !aiStatus?.available && (
-          <p className="text-xs text-[#f59e0b] px-1">
+          <p className="text-[12px] text-[#f59e0b] px-1">
             Ollama is unavailable. Check{" "}
-            <code className="text-[11px] bg-[#1e1e2e] px-1 rounded">OLLAMA_BASE_URL</code>
+            <code className="text-[11px] bg-white/[0.05] px-1 rounded">OLLAMA_BASE_URL</code>
             {" "}and{" "}
-            <code className="text-[11px] bg-[#1e1e2e] px-1 rounded">OLLAMA_API_KEY</code>.
+            <code className="text-[11px] bg-white/[0.05] px-1 rounded">OLLAMA_API_KEY</code>.
           </p>
         )}
       </div>

@@ -14,39 +14,56 @@ export default function LandingNav() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-14 flex items-center justify-between px-8 transition-all duration-300 ${
-        scrolled
-          ? "bg-[#0a0a0f]/90 backdrop-blur-md border-b border-[#1e1e2e]"
-          : "bg-transparent"
+      className={`sticky top-0 z-50 px-4 pb-2 pt-4 transition-all duration-300 sm:px-6 md:px-8 ${
+        scrolled ? "" : ""
       }`}
     >
-      {/* Logo */}
-      <div className="flex items-center gap-2 select-none">
-        <span className="w-6 h-6 rounded bg-[#0f62fe] flex items-center justify-center flex-shrink-0">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M2 2h4v4H2zM8 2h4v4H8zM2 8h4v4H2zM8 8l3 4-3-1-1-3z" fill="#ffffff" />
-          </svg>
-        </span>
-        <span className="font-mono font-bold text-sm tracking-widest text-white uppercase">
-          TRACEFIX
-        </span>
-      </div>
+      <div className="mx-auto flex max-w-[1180px] items-center justify-between rounded-[18px] border border-[rgba(255,255,255,0.08)] bg-[#131316]/80 px-4 py-3 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.25)] md:px-6">
+        <Link href="/" className="flex items-center gap-2.5 select-none group" aria-label="TraceFix home">
+          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-[#5865F2] shadow-[0_0_12px_rgba(88,101,242,0.35)] transition-shadow duration-200 group-hover:shadow-[0_0_18px_rgba(88,101,242,0.5)]">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2 2h4v4H2zM8 2h4v4H8zM2 8h4v4H2zM8 8l3 4-3-1-1-3z" fill="#ffffff" />
+            </svg>
+          </span>
+          <span className="font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-[#F5F5F5]">
+            TRACEFIX
+          </span>
+        </Link>
 
-      {/* Right nav */}
-      <nav className="flex items-center gap-1" aria-label="Landing navigation">
-        <Link
-          href="/login"
-          className="px-3 py-1.5 text-sm text-[#9ca3af] hover:text-white transition-colors rounded-md hover:bg-[#111118]"
-        >
-          Sign In
-        </Link>
-        <Link
-          href="/login"
-          className="px-4 py-1.5 text-sm font-medium text-white bg-[#0f62fe] hover:bg-[#0353e9] rounded-md transition-colors"
-        >
-          Dashboard
-        </Link>
-      </nav>
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary navigation">
+          {[
+            { label: "Features", href: "#features" },
+            { label: "How it Works", href: "#pipeline" },
+            { label: "Docs", href: "#" },
+          ].map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              className="rounded-md px-3 py-1.5 text-[12px] text-[#9AA1AF] transition-colors duration-150 hover:bg-white/[0.04] hover:text-white"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <nav className="flex items-center gap-2" aria-label="Account navigation">
+          <Link
+            href="/login"
+            className="hidden rounded-lg px-3.5 py-1.5 text-[12px] font-medium text-[#9AA1AF] transition-colors duration-150 hover:bg-white/[0.04] hover:text-white sm:inline-flex"
+          >
+            Sign In
+          </Link>
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[rgba(88,101,242,0.35)] bg-[#5865F2] px-3.5 py-1.5 text-[12px] font-medium text-white transition-all duration-200 hover:bg-[#4f5ad8]"
+          >
+            Dashboard
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true" className="opacity-80">
+              <path d="M2.5 6h7m-3-3 3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
+        </nav>
+      </div>
     </header>
   );
 }

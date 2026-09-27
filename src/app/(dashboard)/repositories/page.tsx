@@ -101,26 +101,26 @@ export default function RepositoriesPage() {
     return (
       <div className="flex flex-col gap-6 max-w-3xl">
         <div className="flex flex-col gap-1">
-          <h1 className="text-lg font-semibold text-white">Repositories</h1>
-          <p className="text-sm text-[#6b7280]">
+          <h1 className="text-[17px] font-semibold text-[#F5F5F5] tracking-tight">Repositories</h1>
+          <p className="text-[13px] text-[#6F7078]">
             Connect your GitHub account to see repositories.
           </p>
         </div>
-        <div className="flex flex-col items-center gap-4 py-12 bg-[#111118] border border-[#1e1e2e] rounded-xl">
-          <div className="w-12 h-12 rounded-xl bg-[#1e1e2e] flex items-center justify-center">
-            <Github size={22} className="text-[#6b7280]" />
+        <div className="flex flex-col items-center gap-4 py-12 bg-[#19191C] border border-white/[0.07] rounded-xl">
+          <div className="w-11 h-11 rounded-xl bg-white/[0.05] flex items-center justify-center">
+            <Github size={20} className="text-[#6F7078]" />
           </div>
           <div className="text-center">
-            <p className="text-sm text-white font-medium">GitHub not connected</p>
-            <p className="text-xs text-[#6b7280] mt-1">
+            <p className="text-[13px] text-[#F5F5F5] font-medium">GitHub not connected</p>
+            <p className="text-[12px] text-[#6F7078] mt-1">
               Connect your GitHub account to browse and investigate repositories.
             </p>
           </div>
           <a
             href="/api/auth/github/login"
-            className="flex items-center gap-2 px-4 py-2 bg-[#0f62fe] hover:bg-[#0f62fe]/90 text-white text-sm font-medium rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-[#5865F2] hover:bg-[#4752c4] text-white text-[13px] font-medium rounded-lg transition-colors"
           >
-            <Github size={15} />
+            <Github size={14} />
             Connect GitHub
           </a>
         </div>
@@ -133,8 +133,8 @@ export default function RepositoriesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
-          <h1 className="text-lg font-semibold text-white">Repositories</h1>
-          <p className="text-sm text-[#6b7280]">
+          <h1 className="text-[17px] font-semibold text-[#F5F5F5] tracking-tight">Repositories</h1>
+          <p className="text-[13px] text-[#6F7078]">
             {loading
               ? "Loading repositories…"
               : `${repos.length} repository${repos.length !== 1 ? "s" : ""} available for investigation`}
@@ -143,7 +143,7 @@ export default function RepositoriesPage() {
         <button
           onClick={fetchRepos}
           disabled={loading}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-[#6b7280] hover:text-white border border-[#1e1e2e] hover:border-[#2a2a3a] rounded-lg transition-colors disabled:opacity-50"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-[#6F7078] hover:text-[#9A9AA3] border border-white/[0.07] hover:border-white/[0.12] rounded-lg transition-all duration-150 disabled:opacity-40"
         >
           <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
           Refresh
@@ -153,8 +153,8 @@ export default function RepositoriesPage() {
       {/* Search */}
       <div className="relative">
         <Search
-          size={14}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6b7280]"
+          size={13}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6F7078]"
           aria-hidden="true"
         />
         <input
@@ -162,24 +162,24 @@ export default function RepositoriesPage() {
           placeholder="Search repositories…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 bg-[#111118] border border-[#1e1e2e] rounded-xl text-sm text-white placeholder:text-[#6b7280] focus:outline-none focus:border-[#0f62fe] transition-colors"
+          className="w-full pl-9 pr-4 py-2 bg-[#19191C] border border-white/[0.07] rounded-xl text-[13px] text-[#F5F5F5] placeholder:text-[#6F7078] focus:outline-none focus:border-[#5865F2]/50 transition-colors"
         />
       </div>
 
       {/* Error state */}
       {error && (
-        <div className="px-4 py-3 bg-[#ef4444]/10 border border-[#ef4444]/20 rounded-xl text-sm text-[#ef4444]">
+        <div className="px-4 py-3 bg-[#ef4444]/8 border border-[#ef4444]/20 rounded-xl text-[13px] text-[#ef4444]">
           {error}
         </div>
       )}
 
       {/* Loading skeleton */}
       {loading && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="h-[72px] bg-[#111118] border border-[#1e1e2e] rounded-xl animate-pulse"
+              className="h-[66px] bg-[#19191C] border border-white/[0.06] rounded-xl animate-pulse"
             />
           ))}
         </div>
@@ -190,40 +190,40 @@ export default function RepositoriesPage() {
         <>
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
-              <Search size={20} className="text-[#6b7280]" />
-              <p className="text-sm text-[#6b7280]">
+              <Search size={18} className="text-[#6F7078]" />
+              <p className="text-[13px] text-[#6F7078]">
                 {search ? `No repositories matching "${search}"` : "No repositories found"}
               </p>
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               {filtered.map((repo) => {
                 const langCls =
                   repo.language && LANG_COLOR[repo.language]
                     ? LANG_COLOR[repo.language]
-                    : "text-[#9ca3af] bg-[#9ca3af]/10";
+                    : "text-[#9A9AA3] bg-[#9A9AA3]/10";
                 return (
                   <Link
                     key={repo.id}
                     href={`/repositories/${repo.owner}/${repo.name}`}
-                    className="group flex items-center gap-4 px-5 py-4 bg-[#111118] border border-[#1e1e2e] rounded-xl hover:border-[#0f62fe]/40 hover:bg-[#111118]/80 transition-colors"
+                    className="group flex items-center gap-4 px-4 py-3.5 bg-[#19191C] border border-white/[0.07] rounded-xl hover:border-white/[0.13] transition-all duration-150"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-[#0f62fe]/10 flex items-center justify-center flex-shrink-0">
-                      <GitBranch size={15} className="text-[#0f62fe]" aria-hidden="true" />
+                    <div className="w-8 h-8 rounded-lg bg-[#5865F2]/10 flex items-center justify-center flex-shrink-0">
+                      <GitBranch size={14} className="text-[#5865F2]" aria-hidden="true" />
                     </div>
 
                     <div className="flex flex-col gap-0.5 flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-white truncate">
+                        <span className="text-[13px] font-medium text-[#F5F5F5] truncate">
                           {repo.fullName}
                         </span>
                         {repo.private ? (
-                          <Lock size={11} className="text-[#6b7280] flex-shrink-0" />
+                          <Lock size={11} className="text-[#6F7078] flex-shrink-0" />
                         ) : (
-                          <Globe size={11} className="text-[#6b7280] flex-shrink-0" />
+                          <Globe size={11} className="text-[#6F7078] flex-shrink-0" />
                         )}
                       </div>
-                      <div className="flex items-center gap-3 text-[11px] text-[#6b7280]">
+                      <div className="flex items-center gap-3 text-[11px] text-[#6F7078]">
                         <span className="flex items-center gap-1">
                           <GitBranch size={10} aria-hidden="true" />
                           {repo.defaultBranch}
@@ -253,8 +253,8 @@ export default function RepositoriesPage() {
                     )}
 
                     <ArrowRight
-                      size={14}
-                      className="text-[#6b7280] group-hover:text-[#0f62fe] flex-shrink-0 transition-colors"
+                      size={13}
+                      className="text-[#6F7078] group-hover:text-[#9A9AA3] flex-shrink-0 transition-colors"
                       aria-hidden="true"
                     />
                   </Link>

@@ -1,5 +1,79 @@
 [
   {
+    "id": "42a492c99cce",
+    "repositoryId": "1341971387",
+    "repositoryName": "video-prism-studio",
+    "owner": "ShkAhmed628",
+    "branch": "main",
+    "cloneUrl": "https://github.com/ShkAhmed628/video-prism-studio.git",
+    "bugDescription": "Check for the suspected issue.",
+    "status": "failed",
+    "createdAt": "2026-09-27T13:49:32.726Z",
+    "updatedAt": "2026-09-27T13:49:32.758Z",
+    "workspaceId": "5deb03",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T13:49:32.733Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "failed",
+        "timestamp": "2026-09-27T13:49:32.756Z",
+        "detail": "spawn docker ENOENT"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "pending"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "pending"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "error": "Cloning failed: spawn docker ENOENT"
+  },
+  {
     "id": "3f2cc446eccc",
     "repositoryId": "1383991979",
     "repositoryName": "automyx-forge-lab",

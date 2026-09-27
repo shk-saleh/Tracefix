@@ -14,7 +14,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
 
   const { id } = await params;
   try {
-    const investigation = retryInvestigation(id, session.githubAccessToken);
+    const investigation = retryInvestigation(id, session.githubUserId, session.githubAccessToken);
     return NextResponse.json({ investigation }, { status: 202 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unable to retry investigation";

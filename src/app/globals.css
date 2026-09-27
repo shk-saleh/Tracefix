@@ -49,17 +49,18 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 
   /* TRACEFIX color tokens */
-  --color-tf-background: #0a0a0f;
-  --color-tf-surface: #111118;
-  --color-tf-surface-2: #1a1a24;
-  --color-tf-border: #1e1e2e;
-  --color-tf-accent: #0f62fe;
-  --color-tf-accent-hover: #0353e9;
+  --color-tf-background: #101011;
+  --color-tf-surface: #19191C;
+  --color-tf-surface-2: #1C1C20;
+  --color-tf-surface-3: #202024;
+  --color-tf-border: rgba(255,255,255,0.08);
+  --color-tf-accent: #5865F2;
+  --color-tf-accent-hover: #4752c4;
   --color-tf-success: #22c55e;
   --color-tf-warning: #f59e0b;
   --color-tf-error: #ef4444;
-  --color-tf-muted: #6b7280;
-  --color-tf-muted-foreground: #9ca3af;
+  --color-tf-muted: #6F7078;
+  --color-tf-muted-foreground: #9A9AA3;
 }
 
 :root {
@@ -137,8 +138,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #0a0a0f;
-    color: #ffffff;
+    background-color: #101011;
+    color: #F5F5F5;
   }
   html {
     @apply font-sans;
@@ -146,7 +147,7 @@
 
   /* Global focus-visible ring — keyboard navigation */
   :focus-visible {
-    outline: 2px solid #0f62fe;
+    outline: 2px solid #5865F2;
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -159,18 +160,18 @@
 
 /* Scrollbar styles */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0f;
+  background: #101011;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e1e2e;
+  background: rgba(255,255,255,0.1);
   border-radius: 3px;
 }
 
 /* Selection */
 ::selection {
-  background: #0f62fe33;
+  background: rgba(88,101,242,0.3);
   color: #ffffff;
 }

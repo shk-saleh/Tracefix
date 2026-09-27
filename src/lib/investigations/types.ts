@@ -81,6 +81,7 @@ export interface TimelineStep {
 
 export interface Investigation {
   id: string;
+  githubUserId: number;
   repositoryId: string;
   repositoryName: string;
   owner: string;
