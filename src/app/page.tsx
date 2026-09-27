@@ -5,10 +5,9 @@ import FeaturePipeline from "@/components/landing/FeaturePipeline";
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#101011] text-[#F5F5F5]">
-      <div className="mx-auto max-w-[1240px] px-3 pb-10 pt-5 sm:px-5 lg:px-6">
-        <div className="relative overflow-hidden rounded-[28px] border border-[rgba(255,255,255,0.08)] bg-[#0d0d10] shadow-[0_20px_80px_rgba(0,0,0,0.55)]">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(96,104,255,0.12),_transparent_42%)]" aria-hidden="true" />
-          <div className="pointer-events-none absolute inset-0 opacity-60" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '44px 44px', maskImage: 'radial-gradient(circle at center, black 35%, transparent 100%)' }} aria-hidden="true" />
+      <div className="relative w-full overflow-hidden bg-[#0d0d10]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(96,104,255,0.12),_transparent_42%)]" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-0 opacity-60" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '44px 44px', maskImage: 'radial-gradient(circle at center, black 35%, transparent 100%)' }} aria-hidden="true" />
 
           <LandingNav />
           <HeroSection />
@@ -40,11 +39,10 @@ export default function LandingPage() {
               </div>
 
               <p className="text-[12px] text-[#6F7078]">
-                Built for the IBM Hackathon 2025
+                Built for the IBM Hackathon 2026
               </p>
             </div>
           </footer>
-        </div>
       </div>
     </div>
   );

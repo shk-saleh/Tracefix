@@ -37,7 +37,7 @@ export default function HeroSection() {
           className="mb-7 inline-flex items-center gap-2 rounded-full border border-[rgba(88,101,242,0.25)] bg-[rgba(88,101,242,0.08)] px-3.5 py-1.5 text-[11px] font-mono uppercase tracking-[0.2em] text-[#A5B0FF]"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-[#5865F2]" />
-          IBM Hackathon Project · 2025
+          IBM Hackathon Project · 2026
         </motion.div>
 
         <motion.h1

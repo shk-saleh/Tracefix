@@ -1,5 +1,88 @@
 [
   {
+    "id": "12f862fe2fb0",
+    "githubUserId": 143253075,
+    "repositoryId": "1386108643",
+    "repositoryName": "meetsaleh2.0",
+    "owner": "shk-saleh",
+    "branch": "main",
+    "cloneUrl": "https://github.com/shk-saleh/meetsaleh2.0.git",
+    "bugDescription": "Project routing is not working.",
+    "status": "preparing",
+    "createdAt": "2026-09-27T14:40:55.345Z",
+    "updatedAt": "2026-09-27T14:41:11.370Z",
+    "workspaceId": "81fa69",
+    "timeline": [
+      {
+        "id": "t_connect",
+        "label": "Repository connected",
+        "status": "completed",
+        "timestamp": "2026-09-27T14:40:55.351Z"
+      },
+      {
+        "id": "t_clone",
+        "label": "Cloning repository",
+        "status": "completed",
+        "timestamp": "2026-09-27T14:41:11.286Z"
+      },
+      {
+        "id": "t_detect",
+        "label": "Detecting project type",
+        "status": "completed",
+        "timestamp": "2026-09-27T14:41:11.341Z",
+        "detail": "typescript / npm / unknown"
+      },
+      {
+        "id": "t_install",
+        "label": "Installing dependencies",
+        "status": "running",
+        "timestamp": "2026-09-27T14:41:11.364Z"
+      },
+      {
+        "id": "t_baseline",
+        "label": "Running baseline tests",
+        "status": "pending"
+      },
+      {
+        "id": "t_analyze",
+        "label": "Analyzing repository",
+        "status": "pending"
+      },
+      {
+        "id": "t_reproduce",
+        "label": "Reproducing bug",
+        "status": "pending"
+      },
+      {
+        "id": "t_rootcause",
+        "label": "Finding root cause",
+        "status": "pending"
+      },
+      {
+        "id": "t_regression",
+        "label": "Generating regression test",
+        "status": "pending"
+      },
+      {
+        "id": "t_fix",
+        "label": "Applying fix",
+        "status": "pending"
+      },
+      {
+        "id": "t_verify",
+        "label": "Verifying fix",
+        "status": "pending"
+      }
+    ],
+    "projectInfo": {
+      "language": "typescript",
+      "packageManager": "npm",
+      "framework": "next.js",
+      "testFramework": "unknown",
+      "supported": true
+    }
+  },
+  {
     "id": "42a492c99cce",
     "repositoryId": "1341971387",
     "repositoryName": "video-prism-studio",
